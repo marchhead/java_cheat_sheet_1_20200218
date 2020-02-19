@@ -43,17 +43,12 @@ public class CountFilesOrFoldersCommand implements ICommand {
         int folderCount = 0;
         File root = new File(url);
         if (root.isDirectory()) {
-            File[] fs = root.listFiles(new FilenameFilter() {
-
-                public boolean accept(File dir, String name) {
-
-                    File f = new File(dir.getPath() + File.separator + name);
-
-                    if (name.endsWith(extension) || f.isDirectory()) {
-                        return true;
-                    }
-                    return false;
+            File[] fs = root.listFiles((File dir, String name) -> {
+                File f = new File(dir.getPath() + File.separator + name);
+                if (name.endsWith(extension) || f.isDirectory()) {
+                    return true;
                 }
+                return false;
             });
             for (File f : fs) {
                 if (f.isDirectory()) {
@@ -76,20 +71,20 @@ public class CountFilesOrFoldersCommand implements ICommand {
         File root = new File(url);
 
         if (root.isDirectory()) {
-            File[] fs = root.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    File f = new File(dir.getPath() + File.separator + name);
-                    if (name.endsWith(extension) || f.isDirectory()) {
-                        return true;
+            File[] fs = root.listFiles(
+
+                    (File dir, String name) -> {
+                        File f = new File(dir.getPath() + File.separator + name);
+                        if (name.endsWith(extension) || f.isDirectory()) {
+                            return true;
+                        }
+                        return false;
                     }
-                    return false;
-                }
-            });
+            );
             for (File f : fs) {
                 if (f.isDirectory()) {
                     folderCount++;
-                    CountResult cr = getCountRecursion(f.getPath() , extension);
+                    CountResult cr = getCountRecursion(f.getPath(), extension);
                     fileCount += cr.fileCount;
                     folderCount += cr.folderCount;
                 } else {
